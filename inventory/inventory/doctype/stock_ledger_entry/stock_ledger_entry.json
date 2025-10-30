@@ -1,0 +1,90 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "SLE.###",
+ "creation": "2025-10-13 15:39:07.001659",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_pznh",
+  "item",
+  "warehouse",
+  "qty_change",
+  "value_change",
+  "valuation_rate",
+  "voucher_code",
+  "voucher_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_pznh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "qty_change",
+   "fieldtype": "Int",
+   "label": "Qty Change"
+  },
+  {
+   "fieldname": "value_change",
+   "fieldtype": "Currency",
+   "label": "Value Change"
+  },
+  {
+   "fieldname": "valuation_rate",
+   "fieldtype": "Currency",
+   "label": "Valuation Rate"
+  },
+  {
+   "fieldname": "voucher_code",
+   "fieldtype": "Link",
+   "label": "Voucher Code",
+   "options": "Stock Entry"
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Data",
+   "label": "Voucher Type"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-10-24 14:53:06.361672",
+ "modified_by": "Administrator",
+ "module": "Inventory",
+ "name": "Stock Ledger Entry",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
