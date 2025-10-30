@@ -25,13 +25,13 @@ const deleteRow = (index: number) => {
   if (rows.value.length === 0) insertRow();
 };
 
-const getFieldType = (val: string) => {
-  const field = props.doctypeFields?.find((item) => item.value === val);
-  return field?.type;
+const getField = (val: string) => {
+  return props.doctypeFields?.find((item) => item.value === val);
 };
 
 const updateFilter = (val: any, index: number) => {
-  rows.value[index].field.fieldType = getFieldType(val);
+  rows.value[index].field.fieldType = getField(val).type;
+  rows.value[index].field.options = getField(val).options;
 };
 </script>
 
@@ -58,7 +58,7 @@ const updateFilter = (val: any, index: number) => {
           placeholder="is"
           :options="
             getOperators(
-              getFieldType(row.field.fieldName),
+              row.field.fieldType,
               row.field.fieldType,
             )
           "
@@ -66,6 +66,7 @@ const updateFilter = (val: any, index: number) => {
         />
 
         <component :is="getValueControl(row)" v-model="row.value" />
+        <Button icon="x" variant="ghost" @click="deleteRow(index)" />
       </template>
     </div>
 

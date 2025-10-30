@@ -111,9 +111,7 @@ export const timespanOptions = [
 
 export const getValueControl = (f) => {
   const { field, operator } = f;
-  const {  fieldType } = field;
-
-	console.log(fieldType, 'bruh')
+  const { fieldType, options } = field;
 
   if (operator === "is") {
     return h(Select, {
@@ -133,7 +131,15 @@ export const getValueControl = (f) => {
   }
 
   if (typeSelect.includes(fieldType) || typeCheck.includes(fieldType)) {
-    return h(Select, { options: [] });
+    let _options = options;
+
+    if (!options)
+      _options = [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" },
+      ];
+
+    return h(Select, { options: _options });
   }
 
   if (typeLink.includes(fieldType)) {

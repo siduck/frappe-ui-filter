@@ -16,7 +16,14 @@ let resource = createResource({
 
 resource.fetch().then((r) => {
   doctypeFields.value = r.docs[0].fields
-    .map((x) => ({ label: x.label, type: x.fieldtype, value: x.fieldname }))
+    .map((x) => {
+      return {
+        label: x.label,
+        type: x.fieldtype,
+        value: x.fieldname,
+        options: x.options?.split("\n"),
+      };
+    })
     .filter((x) =>
       !["Section Break", "Read Only", "Column Break"].includes(x.type)
     );
