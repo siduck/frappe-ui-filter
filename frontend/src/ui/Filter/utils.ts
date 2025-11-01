@@ -41,26 +41,28 @@ const likeOperators = [
   { label: "Is", value: "is" },
 ];
 
-export const getOperators = (fieldtype: string, fieldname: string) => {
-  if (fieldname === "_assign") return likeOperators;
+export const getOperators = (field) => {
+  const { fieldType, fieldName } = field;
 
-  if (typeNumber.includes(fieldtype)) {
+  if (fieldName === "_assign") return likeOperators;
+
+  if (typeNumber.includes(fieldType)) {
     return [...baseOperators, ...comparisonOperators];
   }
 
   if (
-    typeString.includes(fieldtype) ||
-    typeSelect.includes(fieldtype) ||
-    typeLink.includes(fieldtype)
+    typeString.includes(fieldType) ||
+    typeSelect.includes(fieldType) ||
+    typeLink.includes(fieldType)
   ) {
     return baseOperators;
   }
 
-  if (typeCheck.includes(fieldtype)) {
+  if (typeCheck.includes(fieldType)) {
     return [{ label: "Equals", value: "equals" }];
   }
 
-  if (["Duration"].includes(fieldtype)) {
+  if (["Duration"].includes(fieldType)) {
     return [
       { label: "Like", value: "like" },
       { label: "Not Like", value: "not like" },
@@ -70,7 +72,7 @@ export const getOperators = (fieldtype: string, fieldname: string) => {
     ];
   }
 
-  if (typeDate.includes(fieldtype)) {
+  if (typeDate.includes(fieldType)) {
     return [
       { label: "Equals", value: "equals" },
       { label: "Not Equals", value: "not equals" },
@@ -81,7 +83,7 @@ export const getOperators = (fieldtype: string, fieldname: string) => {
     ];
   }
 
-  if (typeRating.includes(fieldtype)) {
+  if (typeRating.includes(fieldType)) {
     return [
       { label: "Equals", value: "equals" },
       { label: "Not Equals", value: "not equals" },
@@ -89,6 +91,8 @@ export const getOperators = (fieldtype: string, fieldname: string) => {
       ...comparisonOperators,
     ];
   }
+
+  return baseOperators;
 };
 
 export const timespanOptions = [
@@ -128,9 +132,9 @@ export const getValueControl = (f) => {
     return h(Select, { options: timespanOptions });
   }
 
-  if (["like", "not like", "in", "not in"].includes(operator)) {
-    return h(TextInput);
-  }
+  // if (["like", "not like", "in", "not in"].includes(operator)) {
+  //   return h(TextInput);
+  // }
 
   if (typeSelect.includes(fieldType) || typeCheck.includes(fieldType)) {
     let _options = options;
@@ -148,21 +152,30 @@ export const getValueControl = (f) => {
     if (fieldType === "Dynamic Link") {
       return h(TextInput);
     }
-    return h(Link, { class: "form-control", doctype: options[0], value: f.value });
+    return h(Link, {
+      class: "form-control",
+      doctype: options[0],
+      value: f.value,
+    });
   }
 
   if (typeNumber.includes(fieldType)) {
-    return h(TextInput, { type: "number" });
+    return h(TextInput, { type: "number", placeholder: "Enter Number" });
   }
 
   if (typeDate.includes(fieldType) && operator === "between") {
-    return h(DateRangePicker, { value: f.value, iconLeft: "" });
+    return h(DateRangePicker, {
+      value: f.value,
+      iconLeft: "",
+      placeholder: "Select Date Range",
+    });
   }
 
   if (typeDate.includes(fieldType)) {
     return h(fieldType === "Date" ? DatePicker : DateTimePicker, {
       value: f.value,
       iconLeft: "",
+      placeholder: "Select Date",
     });
   }
 
@@ -175,4 +188,12 @@ export const getValueControl = (f) => {
   }
 
   return h(TextInput);
+};
+
+export const getDefaultOperator = (field: {
+  fieldType: string;
+  fieldName: string;
+}) => {
+  const operators = getOperators(field);
+  return operators[0].value;
 };

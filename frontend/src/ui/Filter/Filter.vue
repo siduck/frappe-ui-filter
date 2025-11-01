@@ -1,19 +1,27 @@
-<script setup>
-import { Button, createResource } from "frappe-ui";
-import FilterIcon from "./FilterIcon.vue";
-import { Popover } from "frappe-ui";
-import Inputs from "./Inputs.vue";
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { getDefaultOperator, getOperators, getValueControl } from "./utils";
 
-let doctypeResp = createResource({
+import {
+  Badge,
+  Button,
+  Combobox,
+  createResource,
+  FeatherIcon,
+  Popover,
+  Select,
+} from "frappe-ui";
+
+import FilterIcon from "./FilterIcon.vue";
+
+const doctypeFields = createResource({
   url: "frappe.desk.form.load.getdoctype",
   method: "GET",
   params: { doctype: "ToDo" },
-	auto:true,
+  auto: true,
 
   transform(data) {
-    let fields = data.docs[0].fields;
-
-    const options = fields.map((x) => {
+    const options = data.docs[0].fields.map((x) => {
       return {
         label: x.label,
         type: x.fieldtype,
@@ -25,23 +33,127 @@ let doctypeResp = createResource({
         !["Section Break", "Read Only", "Column Break"].includes(x.type)
       );
 
-		return options;
+    return options;
   },
 });
 
+const dummyObj = () => ({
+  field: { fieldName: "", fieldType: "", options: [] },
+  operator: "",
+  value: "",
+});
+
+const rows = ref([dummyObj()]);
+const insertRow = () => rows.value.push(dummyObj());
+
+const clearRows = (closePopup: () => void) => {
+  rows.value = [dummyObj()];
+  closePopup();
+};
+
+const deleteRow = (index: number) => {
+  rows.value.splice(index, 1);
+  if (rows.value.length === 0) insertRow();
+};
+
+const getField = (val: string) => {
+  return doctypeFields.data?.find((item) => item.value === val);
+};
+
+const filterExists = (val: string) => {
+  return rows.value.some((row) => row.field.fieldName === val);
+};
+
+const updateFilter = (val: string, index: number) => {
+  if (filterExists(val)) {
+    rows.value[index] = dummyObj();
+    return;
+  }
+
+  const field = getField(val);
+  rows.value[index] = {
+    field: {
+      fieldName: val,
+      fieldType: field.type,
+      options: field.options,
+    },
+    operator: getDefaultOperator(field),
+    value: "",
+  };
+};
+
+const filterCount = computed(() =>
+  rows.value.filter((row) => row.field.fieldName !== "").length
+);
 </script>
 
 <template>
-  <Popover>
-    <template #target="{ togglePopover }">
-      <Button @click="togglePopover()">
+  <Popover
+    popover-class="mt-2 p-3 rounded-lg border bg-surface-modal shadow-xl"
+  >
+    <template #target="{ close, togglePopover }">
+      <Button
+        @click="togglePopover()"
+        :class='{ "rounded-r-none": filterCount != 0 }'
+      >
         <template #prefix><FilterIcon /></template>
         Filter
+        <Badge
+          v-if="filterCount != 0"
+          :class='"bg-surface-gray-4 ml-1 rounded"'
+          :label="filterCount"
+        />
       </Button>
+
+      <Button
+        v-if="filterCount != 0"
+        @click="clearRows(close)"
+        class="bg-surface-gray-4"
+        :class='{ "rounded-l-none": filterCount }'
+        icon="x"
+      />
     </template>
 
-    <template #body-main>
-      <Inputs :doctype-fields="doctypeResp.data" />
+    <template #body="{ close }">
+      <div class="grid grid-cols-[1fr_0.7fr_1fr_auto] gap-3">
+        <!-- input fields -->
+        <template v-for="(row, index) in rows">
+          <Combobox
+            :options="doctypeFields.data"
+            :placeholder='"Select an option..."'
+            :disabled="false"
+            @update:modelValue="(e) => updateFilter(e, index)"
+            v-model="row.field.fieldName"
+          />
+
+          <Select
+            placeholder="is"
+            :options="getOperators(row.field)"
+            v-model="row.operator"
+          />
+
+          <component :is="getValueControl(row)" v-model="row.value" />
+          <Button
+            class="-ml-1.5"
+            icon="x"
+            variant="ghost"
+            @click="deleteRow(index)"
+          />
+        </template>
+      </div>
+
+      <hr class="mt-6" />
+
+      <!-- footer buttons -->
+      <div class="flex gap-2 justify-between mt-3">
+        <Button variant="solid" @click="insertRow()" icon-left="plus">
+          Add Filter
+        </Button>
+
+        <Button theme="red" @click="clearRows(close)" icon-left="trash-2">
+          Clear Filters
+        </Button>
+      </div>
     </template>
   </Popover>
 </template>

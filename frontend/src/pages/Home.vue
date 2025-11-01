@@ -3,7 +3,7 @@ import Filter from "../ui/Filter/Filter.vue";
 </script>
 
 <template>
-  <main class="flex m-20 border p-3 rounded">
+  <main class="flex m-20  p-3 rounded">
     <Filter />
   </main>
 </template>
