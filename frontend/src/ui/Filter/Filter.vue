@@ -4,19 +4,16 @@ import FilterIcon from "./FilterIcon.vue";
 import { Popover } from "frappe-ui";
 import Inputs from "./Inputs.vue";
 
-import { ref } from "vue";
-
-const doctypeFields = ref([]);
-
-let resource = createResource({
+let doctypeResp = createResource({
   url: "frappe.desk.form.load.getdoctype",
   method: "GET",
   params: { doctype: "ToDo" },
-});
+	auto:true,
 
-resource.fetch().then((r) => {
-  doctypeFields.value = r.docs[0].fields
-    .map((x) => {
+  transform(data) {
+    let fields = data.docs[0].fields;
+
+    const options = fields.map((x) => {
       return {
         label: x.label,
         type: x.fieldtype,
@@ -24,10 +21,14 @@ resource.fetch().then((r) => {
         options: x.options?.split("\n"),
       };
     })
-    .filter((x) =>
-      !["Section Break", "Read Only", "Column Break"].includes(x.type)
-    );
+      .filter((x) =>
+        !["Section Break", "Read Only", "Column Break"].includes(x.type)
+      );
+
+		return options;
+  },
 });
+
 </script>
 
 <template>
@@ -40,7 +41,7 @@ resource.fetch().then((r) => {
     </template>
 
     <template #body-main>
-      <Inputs :doctype-fields="doctypeFields" />
+      <Inputs :doctype-fields="doctypeResp.data" />
     </template>
   </Popover>
 </template>
