@@ -8,6 +8,8 @@ import {
   DateTimePicker,
 } from "frappe-ui";
 
+import { Link } from "frappe-ui/frappe";
+
 const typeCheck = ["Check"];
 const typeLink = ["Link", "Dynamic Link"];
 const typeNumber = ["Float", "Int", "Currency", "Percent"];
@@ -146,9 +148,7 @@ export const getValueControl = (f) => {
     if (fieldType === "Dynamic Link") {
       return h(TextInput);
     }
-    return h(TextInput);
-    // todo
-    // return h(Link, { class: "form-control", doctype: options, value: f.value });
+    return h(Link, { class: "form-control", doctype: options[0], value: f.value });
   }
 
   if (typeNumber.includes(fieldType)) {

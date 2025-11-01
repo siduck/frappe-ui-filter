@@ -28,6 +28,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "src"),
+			"frappe-ui": path.resolve(__dirname, "../frappe_ui/"),
 			"tailwind.config.js": path.resolve(__dirname, "tailwind.config.js"),
 		},
 	},
@@ -37,4 +38,4 @@ export default defineConfig({
 	server: {
 		allowedHosts: true,
 	},
-})
+});
