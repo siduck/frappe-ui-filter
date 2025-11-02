@@ -1,23 +1,31 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { getDefaultOperator, getOperators, getValueControl } from "./utils";
+import type { PropTypes } from "./types";
+
+import {
+  getDefaultOperator,
+  getOperators,
+  getValueControl,
+  parseFilters,
+} from "./utils";
 
 import {
   Badge,
   Button,
   Combobox,
   createResource,
-  FeatherIcon,
   Popover,
   Select,
 } from "frappe-ui";
 
 import FilterIcon from "./FilterIcon.vue";
 
+let props = defineProps<PropTypes>();
+
 const doctypeFields = createResource({
   url: "frappe.desk.form.load.getdoctype",
   method: "GET",
-  params: { doctype: "ToDo" },
+  params: { doctype: props.doctype },
   auto: true,
 
   transform(data) {
@@ -57,7 +65,7 @@ const deleteRow = (index: number) => {
 };
 
 const getField = (val: string) => {
-  return doctypeFields.data?.find((item) => item.value === val);
+  return doctypeFields.data?.find((x) => x.value === val);
 };
 
 const filterExists = (val: string) => {
@@ -80,6 +88,12 @@ const updateFilter = (val: string, index: number) => {
     operator: getDefaultOperator(field),
     value: "",
   };
+  apply();
+};
+
+const model = defineModel();
+const apply = () => {
+  model.value = parseFilters(rows.value);
 };
 
 const filterCount = computed(() =>
@@ -130,9 +144,14 @@ const filterCount = computed(() =>
             placeholder="is"
             :options="getOperators(row.field)"
             v-model="row.operator"
+            @update:modelValue="apply"
           />
 
-          <component :is="getValueControl(row)" v-model="row.value" />
+          <component
+            :is="getValueControl(row)"
+            v-model="row.value"
+            @update:modelValue="apply"
+          />
           <Button
             class="-ml-1.5"
             icon="x"

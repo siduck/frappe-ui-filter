@@ -197,3 +197,44 @@ export const getDefaultOperator = (field: {
   const operators = getOperators(field);
   return operators[0].value;
 };
+
+const transformIn = (f) => {
+  if (f.operator.includes("like") && !f.value.includes("%")) {
+    f.value = `%${f.value}%`;
+  }
+  return f;
+};
+
+const operatorMap = {
+  is: "is",
+  "is not": "is not",
+  in: "in",
+  "not in": "not in",
+  equals: "=",
+  "not equals": "!=",
+  yes: true,
+  no: false,
+  like: "LIKE",
+  "not like": "NOT LIKE",
+  ">": ">",
+  "<": "<",
+  ">=": ">=",
+  "<=": "<=",
+  between: "between",
+  timespan: "timespan",
+};
+
+export const parseFilters = (filters) => {
+  return filters.map(transformIn).reduce((p, c) => {
+    if (["equals", "="].includes(c.operator)) {
+      if (c.toBoolean) {
+        p[c.field.fieldName] = c.value === "Yes";
+      } else {
+        p[c.field.fieldName] = c.value;
+      }
+    } else {
+      p[c.field.fieldName] = [operatorMap[c.operator.toLowerCase()], c.value];
+    }
+    return p;
+  }, {});
+};
