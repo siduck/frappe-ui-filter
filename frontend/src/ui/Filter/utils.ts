@@ -121,6 +121,7 @@ export const getValueControl = (f) => {
 
   if (operator === "is") {
     return h(Select, {
+			placeholder: "Select Option",
       options: [
         { label: "Set", value: "set" },
         { label: "Not Set", value: "not set" },
@@ -129,7 +130,7 @@ export const getValueControl = (f) => {
   }
 
   if (operator === "timespan") {
-    return h(Select, { options: timespanOptions });
+    return h(Select, { placeholder: "Select Timespan", options: timespanOptions });
   }
 
   // if (["like", "not like", "in", "not in"].includes(operator)) {
@@ -145,12 +146,12 @@ export const getValueControl = (f) => {
         { label: "No", value: "no" },
       ];
 
-    return h(Select, { options: _options });
+    return h(Select, { placeholder:"Select Option", options: _options });
   }
 
   if (typeLink.includes(fieldType)) {
     if (fieldType === "Dynamic Link") {
-      return h(TextInput);
+      return h(TextInput, { placeholder: "Enter Dynamic Link" });
     }
     return h(Link, {
       class: "form-control",
@@ -187,7 +188,7 @@ export const getValueControl = (f) => {
     });
   }
 
-  return h(TextInput);
+  return h(TextInput, {placeholder: "Enter Value"});
 };
 
 export const getDefaultOperator = (field: {

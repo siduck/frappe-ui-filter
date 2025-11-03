@@ -53,15 +53,15 @@ const dummyObj = () => ({
 
 const rows = ref([dummyObj()]);
 const insertRow = () => rows.value.push(dummyObj());
-
 const clearRows = (closePopup: () => void) => {
   rows.value = [dummyObj()];
   closePopup();
+	apply()
 };
-
 const deleteRow = (index: number) => {
   rows.value.splice(index, 1);
   if (rows.value.length === 0) insertRow();
+  apply();
 };
 
 const getField = (val: string) => {
@@ -129,7 +129,7 @@ const filterCount = computed(() =>
     </template>
 
     <template #body="{ close }">
-      <div class="grid grid-cols-[1fr_0.7fr_1fr_auto] gap-3">
+      <div class="grid lg:grid-cols-[1fr_0.7fr_1fr_auto] gap-3">
         <!-- input fields -->
         <template v-for="(row, index) in rows">
           <Combobox
@@ -153,7 +153,7 @@ const filterCount = computed(() =>
             @update:modelValue="apply"
           />
           <Button
-            class="-ml-1.5"
+            class="ml-auto lg:-ml-1.5"
             icon="x"
             variant="ghost"
             @click="deleteRow(index)"
