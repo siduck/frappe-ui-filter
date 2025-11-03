@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"feather-icons": "^4.29.2",
-		"frappe-ui": "frappe/frappe-ui#750dcfb2a586df8aa5385ca191b133ca9e649cd5",
+		"frappe-ui": "https://github.com/siduck/frappe-ui.git#frappe-filter",
 		"socket.io-client": "^4.7.2",
 		"vue": "^3.5.13",
 		"vue-router": "^4.5.0"
