@@ -28,7 +28,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "src"),
-			"frappe-ui": path.resolve(__dirname, "../frappe_ui/"),
+			// "frappe-ui": path.resolve(__dirname, "../frappe_ui/"),
 			"tailwind.config.js": path.resolve(__dirname, "tailwind.config.js"),
 		},
 	},
